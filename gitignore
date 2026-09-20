@@ -1,0 +1,11 @@
+# Local SQLite database (don't commit your personal data)
+*.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Streamlit
+.streamlit/secrets.toml
