@@ -6,12 +6,7 @@ from datetime import date
 DB_FILE = "job_applications.db"
 
 
-# ----------------------------------------------------------------------
-# CUTE MASCOT ARTWORK
-# These are hand-drawn SVGs stored as plain text -- no image files needed,
-# so nothing to misplace. st.markdown renders raw SVG directly when we
-# pass unsafe_allow_html=True.
-# ----------------------------------------------------------------------
+
 
 PANDA_SVG = """
 <svg width="110" height="110" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
@@ -54,19 +49,10 @@ SLEEPY_CAT_SVG = """
 """
 
 
-# ----------------------------------------------------------------------
-# DATABASE FUNCTIONS
-# Each function opens its own connection, does one job, then closes it.
-# This is the simplest pattern to learn with SQLite -- no shared state
-# to worry about, and each function is easy to test on its own.
-# ----------------------------------------------------------------------
+
 
 def init_db():
-    """
-    Creates the 'applications' table if it doesn't already exist.
-    Runs every time the app starts -- CREATE TABLE IF NOT EXISTS makes
-    this safe to call repeatedly without wiping existing data.
-    """
+    
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("""
@@ -145,28 +131,20 @@ def delete_application(app_id):
     conn.close()
 
 
-# ----------------------------------------------------------------------
-# STREAMLIT UI
-# Streamlit re-runs this whole script top-to-bottom every time the user
-# interacts with a widget (clicks a button, types in a box, etc). That's
-# why init_db() is safe to call on every run, and why we re-fetch the
-# stats/table fresh each time instead of trying to update them in place.
-# ----------------------------------------------------------------------
+
 
 st.set_page_config(page_title="Job & Internship Tracker", layout="wide")
 init_db()
 
 st.title("🐼 Job & Internship Tracker")
 
-# --- Sidebar: form to add a new application ---
+
 with st.sidebar:
-    # centered panda mascot above the form
+    
     st.markdown(f"<div style='text-align:center'>{PANDA_SVG}</div>", unsafe_allow_html=True)
     st.header("🎀 Add New Application")
     st.caption("Track job or internship applications here. ✨")
-    # st.form batches all the inputs inside it so nothing is submitted
-    # until the button is clicked -- without it, Streamlit would re-run
-    # the script (and lose your half-typed input) on every keystroke.
+    
     with st.form("add_form", clear_on_submit=True):
         company = st.text_input("Company")
         role = st.text_input("Role")
@@ -194,12 +172,11 @@ col5.metric("Rejected", stats["Rejected"])
 
 st.divider()
 
-# --- Table of all applications ---
+
 st.subheader("📋 All Applications")
 data = get_all_applications()
 
-# A small emoji per status, purely cosmetic, makes the table easier to
-# scan at a glance without changing what's actually stored in the database.
+
 STATUS_EMOJI = {
     "Applied": "📝",
     "Interview": "💬",
@@ -210,8 +187,7 @@ STATUS_EMOJI = {
 if data:
     df = pd.DataFrame(data, columns=["ID", "Company", "Role", "Date Applied", "Status"])
 
-    # Export button: uses the plain (no-emoji) data so the CSV stays clean
-    # and easy to reopen in Excel/Sheets. Built before we add emoji below.
+   
     csv_data = df.to_csv(index=False).encode("utf-8")
     st.download_button(
         label="⬇️ Export as CSV",
@@ -228,9 +204,9 @@ if data:
         if st.button("Delete"):
             delete_application(del_id)
             st.success(f"Deleted application {del_id}")
-            st.rerun()  # re-runs the script so the table refreshes immediately
+            st.rerun()  
 else:
-    # sleepy cat illustration instead of a plain text message
+   
     st.markdown(
         f"<div style='text-align:center; padding-top:1rem'>{SLEEPY_CAT_SVG}"
         f"<p style='color:#8A8296'>No applications yet. Add one from the sidebar!</p></div>",

@@ -1,11 +1,6 @@
-# Local SQLite database (don't commit your personal data)
-*.db
-
-# Python
+venv/
+.venv/
 __pycache__/
 *.pyc
-.venv/
-venv/
-
-# Streamlit
+.env
 .streamlit/secrets.toml
